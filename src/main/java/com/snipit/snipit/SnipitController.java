@@ -3,7 +3,6 @@ package com.snipit.snipit;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 public class SnipitController {
 
+    //holds all the snippets
     ArrayList<SnipitModel> snipets;
 
+    //seeding data to arrayList
     public SnipitController(){
         snipets = new ArrayList<>();
 
@@ -42,6 +43,7 @@ public class SnipitController {
 		snipets.add(s8);
     }
 
+    //get all snippets or can get snippets based on language param
     @GetMapping("/snippets")
     public String getAll(@RequestParam(required = false, defaultValue = "all") String lang) {
         if(!lang.equals("all")) {
@@ -66,12 +68,14 @@ public class SnipitController {
         
   }
 
+  // gets one snippet based on the id
   @GetMapping("/snippets/{id}")
   public String getOneSnippet(@PathVariable int id) {
     SnipitModel snippet = snipets.get(id-1);
       return snippet.toString();
   }
 
+  //adds a new snippet then returns all snippets
   @PostMapping("/snippets")
   public String createSnippet(@RequestBody SnipitModel snipit) {
       
@@ -85,19 +89,19 @@ public class SnipitController {
   }
   
 
-  @GetMapping("/snippets/lang")
-  public String getLangs(@RequestParam("lang") String param) {
-      ArrayList<SnipitModel> langSnips = new ArrayList<>();
+//   @GetMapping("/snippets/lang")
+//   public String getLangs(@RequestParam("lang") String param) {
+//       ArrayList<SnipitModel> langSnips = new ArrayList<>();
 
-        for(SnipitModel s : snipets) {
-            if(s.getLanguage().equalsIgnoreCase(param)) {
-                langSnips.add(s);
-            }
-        }
-         String results = "";
-        for(SnipitModel s : langSnips) {
-            results += s.toString();
-        }
-        return results;    
-  }   
+//         for(SnipitModel s : snipets) {
+//             if(s.getLanguage().equalsIgnoreCase(param)) {
+//                 langSnips.add(s);
+//             }
+//         }
+//          String results = "";
+//         for(SnipitModel s : langSnips) {
+//             results += s.toString();
+//         }
+//         return results;    
+//   }   
 }
