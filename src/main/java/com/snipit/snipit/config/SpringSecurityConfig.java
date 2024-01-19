@@ -28,10 +28,10 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //no auth required for snippers routes or to post a new user
                         .requestMatchers("/snippets", "/snippets/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users", "/users/*").permitAll()
                         //auth reuqired to get users
-                        .requestMatchers(HttpMethod.GET, "/users").authenticated()
-                        // .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/users").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users", "/users/*").permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());   
         return http.build();

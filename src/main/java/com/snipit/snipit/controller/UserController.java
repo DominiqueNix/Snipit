@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snipit.snipit.payload.UserDTO;
+// import com.snipit.snipit.util.JwtToken;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -29,17 +30,56 @@ public class UserController {
 
     ArrayList<UserDetails> users = new ArrayList<UserDetails>();
 
+    // @Autowired
+    // JwtToken jwtToken;
     private final PasswordEncoder passwordEncoder;
-
     public UserController(ApplicationContext context){
         this.passwordEncoder = (PasswordEncoder)context.getBean("passwordEncoder");
+        UserDetails mike = User.builder().username("mike").password(passwordEncoder.encode("testing")).roles("USER").build();
+        users.add(mike);
     }
 
+    // @GetMapping
+    // public String login(HttpServletRequest req) {
+    //     // System.out.println(req.getAuthType());
+    //     // String result = users.get(0).getUsername() + " " + users.get(0).getPassword() + " " + users.get(1).getUsername() + " " + users.get(1).getPassword() ;
+    //     return (String) req.getAttribute("username");
+    // }
+
     @GetMapping
-    public String login(HttpServletRequest req) {
-        System.out.println(req.getAuthType());
-        return users.get(0).getUsername();
+    public String getUsers() {
+        String result = "";
+        for(UserDetails user : users) {
+            result += "username: " + user.getUsername() + " password: " + user.getPassword();
+        }
+
+        return result;
     }
+
+    @GetMapping("/login")
+    public String login(@RequestBody UserDTO userData) {
+        
+        ArrayList<Boolean> booleans = new ArrayList<>();
+
+        UserDetails user;
+
+        for(UserDetails u : users) {
+            if(!u.getUsername().equals(userData.getUsername())) {
+                booleans.add(false);
+            }else {
+                booleans.add(true);
+                // user = User.builder().username(u.getUsername()).password(passwordEncoder.encode(u.getPassword())).roles("USER").build();
+            }
+        }
+
+        if(!booleans.contains(true)) {
+            return "User not found";
+        }
+        
+        
+        
+    }
+    
 
 
     @PostMapping
