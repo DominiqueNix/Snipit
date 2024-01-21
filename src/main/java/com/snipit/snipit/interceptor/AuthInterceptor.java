@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthInterceptor implements HandlerInterceptor{
     @Override
     public boolean preHandle(final HttpServletRequest req, final HttpServletResponse res, final Object handler) throws Exception{
-        System.out.println("HELLO");
+        // System.out.println("HELLO");
         
     //    System.out.println(req.authenticate(res));
 

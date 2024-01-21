@@ -3,8 +3,10 @@ package com.snipit.snipit.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.snipit.snipit.payload.AuthResponse;
 import com.snipit.snipit.payload.UserDTO;
 // import com.snipit.snipit.util.JwtToken;
+import com.snipit.snipit.util.JwtToken;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -30,11 +32,13 @@ public class UserController {
 
     ArrayList<UserDetails> users = new ArrayList<UserDetails>();
 
-    // @Autowired
-    // JwtToken jwtToken;
+    @Autowired
+    JwtToken jwtToken;
+    private final InMemoryUserDetailsManager userDetailsService;
     private final PasswordEncoder passwordEncoder;
     public UserController(ApplicationContext context){
         this.passwordEncoder = (PasswordEncoder)context.getBean("passwordEncoder");
+        this.userDetailsService = (InMemoryUserDetailsManager) context.getBean("userDetailService");
         UserDetails mike = User.builder().username("mike").password(passwordEncoder.encode("testing")).roles("USER").build();
         users.add(mike);
     }
@@ -61,7 +65,7 @@ public class UserController {
         
         ArrayList<Boolean> booleans = new ArrayList<>();
 
-        UserDetails user;
+        String password = "";
 
         for(UserDetails u : users) {
             if(!u.getUsername().equals(userData.getUsername())) {
@@ -69,6 +73,7 @@ public class UserController {
             }else {
                 booleans.add(true);
                 // user = User.builder().username(u.getUsername()).password(passwordEncoder.encode(u.getPassword())).roles("USER").build();
+                password = u.getPassword();
             }
         }
 
@@ -76,7 +81,16 @@ public class UserController {
             return "User not found";
         }
         
-        
+        if(!passwordEncoder.matches(userData.getPassword(), password)){
+            return "Incorrect Password";
+        }
+
+        UserDetails user = userDetailsService.loadUserByUsername(userData.getUsername());
+
+        String accessToken =jwtToken.generateAccessToken(user);
+        AuthResponse response = new AuthResponse(userData.getUsername(), accessToken);
+
+        return response.getAccessToken() + response.getUsername();
         
     }
     
@@ -88,6 +102,7 @@ public class UserController {
         UserDetails newUser = User.builder().username(user.getUsername()).password(passwordEncoder.encode(user.getPassword())).roles("USER").build();
         
         users.add(newUser);
+        userDetailsService.createUser(newUser);
         return "Successfully Added";
     }
     
