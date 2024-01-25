@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>Add Snippet</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>Add Snippet</h1>
+    <form action="#" th:action="@{/snippets}" th:object="${snippet}" method="post">
+    	<p>Language: <input type="text" th:field="*{language}" /></p>
+        <p>Code: <input type="text" th:field="*{code}" /></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+    <a th:href="@{/snippets}">See Snippets</a>
+</body>
+</html>

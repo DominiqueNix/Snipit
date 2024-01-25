@@ -1,0 +1,19 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <body>
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/oauth2/authorization/okta}">Log In</a>
+        </div>
+        <div sec:authorize="isAuthenticated()" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <p th:text="${snippets}"></p>
+            <p>Filter Snippets?</p>
+            <div style="display: block;">
+                <button><a th:href="@{/snippets?lang=java}">Java</a></button>
+                <button><a th:href="@{/snippets?lang=python}">Python</a></button>
+                <button><a th:href="@{/snippets?lang=javascript}">JavaScript</a></button>
+                <button><a th:href="@{/snippets}">All</a></button>
+            </div>
+            <a th:href="@{/}">go home</a>
+            <a th:href="@{/logout}">Log Out</a>
+        </div>
+    </body>
+</html>

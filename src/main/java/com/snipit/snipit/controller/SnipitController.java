@@ -10,16 +10,19 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 
 
-
-@RestController
+@Controller
 @RequestMapping("/snippets")
 public class SnipitController {
 
@@ -68,7 +71,7 @@ public class SnipitController {
 
     //get all snippets or can get snippets based on language param
     @GetMapping
-    public String getAll(@RequestParam(required = false, defaultValue = "all") String lang) {
+    public String getAll(@RequestParam(required = false, defaultValue = "all") String lang, Model model) {
 
         TextEncryptor encryptor = Encryptors.text(encPass, encSalt);
 
@@ -98,13 +101,15 @@ public class SnipitController {
             // return results; 
         }
 
-        return results;
+        model.addAttribute("snippets", results);
+
+        return "snippets";
         
   }
 
   // gets one snippet based on the id
   @GetMapping("{id}")
-  public String getOneSnippet(@PathVariable int id) {
+  public String getOneSnippet(@PathVariable int id, Model model) {
 
     TextEncryptor encryptor = Encryptors.text(encPass, encSalt);
 
@@ -116,12 +121,14 @@ public class SnipitController {
 
     snippet.setCode(encryptor.encrypt(snippet.getCode()));
 
-    return result;
+    model.addAttribute("snippets", result);
+
+    return "snippets";
   }
 
   //adds a new snippet then returns all snippets
   @PostMapping
-  public String createSnippet(@RequestBody SnippetDTO snipitDto) {
+  public String createSnippet(@ModelAttribute SnippetDTO snipitDto, Model model) {
 
     TextEncryptor encryptor = Encryptors.text(encPass, encSalt);
       
@@ -130,8 +137,9 @@ public class SnipitController {
     String code = encryptor.encrypt(snipitDto.getCode());
 
     snipets.add(new Snippet(id, language, code));
+    model.addAttribute("snippet", snipitDto);
       
-      return "Successfully Added!";
+        return "redirect:/";
   }
   
 }
